@@ -9,7 +9,8 @@ def hola_mundo (request): # El request captura las peticiones de los clientes
     return HttpResponse ("<h1>hola mundo</h1>")
 
 def otra_mas (request):
-    return render(request,'index.html')
+    autor = Author.objects.all()
+    return render(request,'index.html', {'authors':autor})
     autor.html
     
 def autor_list (request):
