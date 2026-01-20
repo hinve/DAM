@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve FastAPI app
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/groceries_plugin
+Environment="PATH=/var/www/groceries_plugin/.venv/bin"
+ExecStart=/var/www/groceries_plugin/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000 --workers 4
+
+[Install]
+WantedBy=multi-user.target

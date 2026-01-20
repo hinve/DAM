@@ -1,0 +1,8 @@
+{% extends 'index.html' %}
+<h1>Listado de autores</h1>
+<ul>
+{% for aut in authors %}
+<li>{{ aut }}</li>
+<li>{{ aut.name}}</li>
+{% endfor %}
+</ul>

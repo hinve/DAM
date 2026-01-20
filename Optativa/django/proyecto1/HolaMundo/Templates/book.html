@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+<!--<h1>Listado de libros</h1>-->
+{%block title%} Listado de Libros {%endblock title%}
+{%block content%}
+<table border="2">
+<thead>
+<th>Titulo</th>
+<th>Codigo</th>
+
+<th>Autor</th>
+</thead>
+<tbody>
+{% for bo in books %}
+<tr>
+<td>{{ bo.title }} </td>
+<td>{{ bo.cod }}</td>
+<td>{% for au in bo.author.all %}
+{{au}}
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+{%endblock content%}
