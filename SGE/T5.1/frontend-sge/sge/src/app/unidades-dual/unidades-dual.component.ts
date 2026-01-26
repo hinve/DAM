@@ -30,11 +30,12 @@ export class UnidadesDualComponent implements OnInit {
 
   idUnidadDualFilter = new FormControl();
   unidadDualFilter = new FormControl();
+  observacionesFilter = new FormControl();
 
   permises: Permises;
 
   displayedColumns: string[];
-  private filterValues = { id_unidad_dual: '', unidad_dual: '' };
+  private filterValues = { id_unidad_dual: '', unidad_dual: '', observaciones: '' };
 
   constructor(
     public dialog: MatDialog,
@@ -54,7 +55,7 @@ export class UnidadesDualComponent implements OnInit {
 
     if (RESPONSE.ok) {
       this.unidadesDualService.unidadDual = RESPONSE.data as UnidadDual[];
-      this.displayedColumns = ['id_unidad_dual', 'unidad_dual', 'actions'];
+      this.displayedColumns = ['id_unidad_dual', 'unidad_dual', 'observaciones' , 'actions'];
       this.dataSource.data = this.unidadesDualService.unidadDual;
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
@@ -104,7 +105,8 @@ export class UnidadesDualComponent implements OnInit {
       const searchTerms = JSON.parse(filter);
 
       return unidadDual.id_unidad_dual.toString().indexOf(searchTerms.id_unidad_dual) !== -1
-        && unidadDual.unidad_dual.toLowerCase().indexOf(searchTerms.unidad_dual.toLowerCase()) !== -1;
+        && unidadDual.unidad_dual.toLowerCase().indexOf(searchTerms.unidad_dual.toLowerCase()) !== -1
+        && unidadDual.observaciones.toLowerCase().indexOf(searchTerms.observaciones.toLowerCase()) !== -1;
     };
 
     return filterFunction;
@@ -122,5 +124,11 @@ export class UnidadesDualComponent implements OnInit {
           this.filterValues.unidad_dual = value;
           this.dataSource.filter = JSON.stringify(this.filterValues);
       }); 
+
+      this.observacionesFilter.valueChanges
+      .subscribe(value => {
+          this.filterValues.observaciones = value;
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+      });
   }
 }
