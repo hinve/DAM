@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Equipos{% endblock %}
+
+{% block content %}
+	<h1>Equipos</h1>
+	<a href="{% url 'equipo_create' %}">Crear equipo</a>
+
+	<ul>
+		{% for equipo in equipos %}
+			<li>
+				<a href="{% url 'equipo_detail' equipo.id %}">{{ equipo.nombre }}</a>
+				- <a href="{% url 'equipo_update' equipo.id %}">Editar</a>
+				- <a href="{% url 'equipo_delete' equipo.id %}">Eliminar</a>
+			</li>
+		{% empty %}
+			<li>No hay equipos creados.</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
