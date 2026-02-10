@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ accion }} Torneo{% endblock %}
+
+{% block content %}
+    <h1>{{ accion }} Torneo</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <!-- Botón de guardado -->
+        <button type="submit">{{ accion }} Torneo</button>
+    </form>
+
+    <br>
+    <a href="{% url 'torneo_list' %}">Cancelar y volver</a>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Torneos{% endblock %}
+
+{% block content %}
+    <h1>Mis Torneos</h1>
+    <!-- Enlace para crear uno nuevo -->
+    <a href="{% url 'torneo_create' %}" class="button">Crear Nuevo Torneo</a>
+
+    <ul>
+        {% for torneo in torneos %}
+            <li>
+                <!-- Nombre clicable que lleva al detalle -->
+                <strong><a href="{% url 'torneo_detail' torneo.id %}">{{ torneo.nombre }}</a></strong>
+                <br>
+                <small>Inicio: {{ torneo.fecha_inicio }} | Equipos: {{ torneo.equipos_participantes.count }}</small>
+                <br>
+                <!-- Acciones rápidas -->
+                <a href="{% url 'torneo_update' torneo.id %}">Editar</a>
+            </li>
+        {% empty %}
+            <li>No has creado ningún torneo todavía.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

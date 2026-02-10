@@ -28,5 +28,10 @@ urlpatterns = [
     path('torneos/', include('torneos.urls')),
     path('equipos/', include('torneos.urls')),
     path('equipos/<int:equipo_id>/jugadores/nuevo/', views.jugador_create, name='jugador_create'),
+    path('mis-torneos/', views.torneo_list, name='torneo_list'),
+    path('mis-torneos/nuevo/', views.torneo_create, name='torneo_create'),
+    path('mis-torneos/<int:torneo_id>/', views.torneo_detail, name='torneo_detail'),
+    path('mis-torneos/<int:torneo_id>/editar/', views.torneo_update, name='torneo_update'),
+    path('mis-torneos/<int:torneo_id>/eliminar/', views.torneo_delete, name='torneo_delete'),
     
 ]

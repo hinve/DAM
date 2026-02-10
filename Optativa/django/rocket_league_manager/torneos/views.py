@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Equipo
-from .forms import EquipoForm, JugadorForm
+from .models import Equipo, Torneo
+from .forms import EquipoForm, JugadorForm, TorneoForm
 
 
 @login_required
@@ -79,3 +79,50 @@ def jugador_create(request, equipo_id):
     else:
         form = JugadorForm()
     return render(request, 'torneos/jugadores/form.html', {'form': form, 'equipo': equipo, 'accion': 'Añadir'})
+
+@login_required
+def torneo_list(request):
+    torneos = Torneo.objects.filter(creado_por=request.user).order_by('-fecha_inicio')
+    return render(request, 'torneos/torneos/list.html', {'torneos': torneos})
+
+@login_required
+def torneo_detail(request, torneo_id):
+    torneo = get_object_or_404(Torneo, id=torneo_id, creado_por=request.user)
+    return render(request, 'torneos/torneos/detail.html', {'torneo': torneo})
+
+@login_required
+def torneo_create(request):
+    if request.method == 'POST':
+        form = TorneoForm(request.POST)
+        if form.is_valid():
+            torneo = form.save(commit=False)
+            torneo.creado_por = request.user
+            torneo.save()
+            form.save_m2m()  # Guardar relaciones ManyToMany
+            messages.success(request, 'Torneo creado correctamente.')
+            return redirect('torneo_list')
+    else:
+        form = TorneoForm()
+    return render(request, 'torneos/torneos/form.html', {'form': form, 'accion': 'Crear'})
+
+@login_required
+def torneo_update(request, torneo_id):
+    torneo = get_object_or_404(Torneo, id=torneo_id, creado_por=request.user)
+    if request.method == 'POST':
+        form = TorneoForm(request.POST, instance=torneo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Torneo actualizado correctamente.')
+            return redirect('torneo_detail', torneo_id=torneo.pk)
+    else:
+        form = TorneoForm(instance=torneo)
+    return render(request, 'torneos/torneos/form.html', {'form': form, 'accion': 'Editar', 'torneo': torneo})
+
+@login_required
+def torneo_delete(request, torneo_id):
+    torneo = get_object_or_404(Torneo, id=torneo_id, creado_por=request.user)
+    if request.method == 'POST':
+        torneo.delete()
+        messages.success(request, 'Torneo eliminado correctamente.')
+        return redirect('torneo_list')
+    return render(request, 'torneos/torneos/confirm_delete.html', {'torneo': torneo})

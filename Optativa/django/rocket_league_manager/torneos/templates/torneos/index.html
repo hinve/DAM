@@ -1,8 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio Torneos{% endblock %}
+{% block title %}Inicio - Rocket League Manager{% endblock %}
 
 {% block content %}
-    <h1>Inicio de Torneos</h1>
-    <p>La ruta /torneos/ está funcionando.</p>
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm border text-center">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold text-primary">Rocket League Manager</h1>
+      <p class="col-md-8 fs-4 mx-auto">Gestiona tus torneos, equipos y jugadores como un profesional.</p>
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-lg" href="{% url 'torneo_create' %}">Crear Torneo</a>
+        <a class="btn btn-outline-secondary btn-lg" href="{% url 'equipo_list' %}">Mis Equipos</a>
+      {% endif %}
+    </div>
+</div>
+
+<h2 class="mb-4 border-bottom pb-2">Últimas Noticias</h2>
+
+<div class="row">
+    {% for noticia in noticias %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            {% if noticia.imagen %}
+            <img src="{{ noticia.imagen }}" class="card-img-top" alt="Noticia" style="height: 150px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ noticia.titulo }}</h5>
+                <p class="card-text text-muted">{{ noticia.cuerpo|truncatewords:20 }}</p>
+                <a href="#" class="btn btn-sm btn-outline-primary">Leer más</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning">No se pudieron cargar las noticias en este momento.</div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

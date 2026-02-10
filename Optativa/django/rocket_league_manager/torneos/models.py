@@ -50,6 +50,7 @@ class Torneo(models.Model):
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField()
     equipos_participantes = models.ManyToManyField(Equipo, related_name='torneos')
+    creado_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name='torneos_creados')
     
     def __str__(self):
         return self.nombre
