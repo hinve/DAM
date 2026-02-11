@@ -8,6 +8,7 @@ from models import Usuario
 api_key_header = APIKeyHeader(name="Authorization", auto_error=False, scheme_name="Token PHP")
 
 def get_current_user(token_header: str = Depends(api_key_header), db: Session = Depends(get_db)):
+    
     # si no existe el token pues un error 401
     if not token_header:
         raise HTTPException(status_code=401, detail="Token no proporcionado")
