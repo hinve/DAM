@@ -1,0 +1,82 @@
+[
+  {
+    "nombre": "Paella Valenciana",
+    "descripcion": "Arroz con marisco y verduras",
+    "ingredientes": ["arroz bomba", "gambas", "mejillones", "pimiento", "azafrán"],
+    "tiempo_preparacion": 75,
+    "dificultad": "Media",
+    "categoria": "Española",
+    "calorias": 520,
+    "fecha_publicacion": "2024-03-10"
+  },
+  {
+    "nombre": "Ensalada César",
+    "descripcion": "Ensalada con pollo y aderezo especial",
+    "ingredientes": ["lechuga", "pollo", "queso parmesano", "crutones", "salsa césar"],
+    "tiempo_preparacion": 25,
+    "dificultad": "Fácil",
+    "categoria": "Entrante",
+    "calorias": 320,
+    "fecha_publicacion": "2024-02-15"
+  },
+  {
+    "nombre": "Lasagna Bolonesa",
+    "descripcion": "Pasta al horno con carne y bechamel",
+    "ingredientes": ["pasta lasagna", "carne picada", "tomate", "queso mozzarella", "bechamel"],
+    "tiempo_preparacion": 90,
+    "dificultad": "Difícil",
+    "categoria": "Italiana",
+    "calorias": 650,
+    "fecha_publicacion": "2024-01-20"
+  },
+  {
+    "nombre": "Guacamole",
+    "descripcion": "Salsa mexicana de aguacate",
+    "ingredientes": ["aguacate", "limón", "cebolla", "tomate", "cilantro"],
+    "tiempo_preparacion": 15,
+    "dificultad": "Fácil",
+    "categoria": "Mexicana",
+    "calorias": 180,
+    "fecha_publicacion": "2024-04-05"
+  },
+  {
+    "nombre": "Sushi de Salmón",
+    "descripcion": "Rollitos de arroz con salmón fresco",
+    "ingredientes": ["arroz para sushi", "salmón", "alga nori", "aguacate", "sésamo"],
+    "tiempo_preparacion": 50,
+    "dificultad": "Media",
+    "categoria": "Japonesa",
+    "calorias": 280,
+    "fecha_publicacion": "2024-03-22"
+  },
+  {
+    "nombre": "Brownie de Chocolate",
+    "descripcion": "Postre de chocolate con nueces",
+    "ingredientes": ["chocolate", "mantequilla", "huevos", "azúcar", "harina", "nueces"],
+    "tiempo_preparacion": 40,
+    "dificultad": "Media",
+    "categoria": "Postre",
+    "calorias": 450,
+    "fecha_publicacion": "2024-02-28"
+  },
+  {
+    "nombre": "Gazpacho Andaluz",
+    "descripcion": "Sopa fría de tomate y verduras",
+    "ingredientes": ["tomate", "pepino", "pimiento", "ajo", "aceite de oliva"],
+    "tiempo_preparacion": 20,
+    "dificultad": "Fácil",
+    "categoria": "Española",
+    "calorias": 150,
+    "fecha_publicacion": "2024-05-10"
+  },
+  {
+    "nombre": "Curry de Pollo",
+    "descripcion": "Pollo en salsa de curry con arroz",
+    "ingredientes": ["pollo", "cebolla", "leche de coco", "curry", "arroz basmati"],
+    "tiempo_preparacion": 60,
+    "dificultad": "Media",
+    "categoria": "India",
+    "calorias": 480,
+    "fecha_publicacion": "2024-04-18"
+  }
+]

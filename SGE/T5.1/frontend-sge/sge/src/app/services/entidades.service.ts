@@ -3,9 +3,10 @@ import { Entidad } from '../shared/interfaces/entidad';
 import { ApiResponse } from '../shared/interfaces/api-response';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../shared/common.service';
-import { URL_API } from 'src/environments/environment';
+import { URL_API, URL_FASTAPI } from 'src/environments/environment';
 
 const ENDPOINT = 'entidad';
+const ENDPOINT_MAESTROS = 'maestros';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,10 @@ export class EntidadesService {
   entidad: Entidad;
 
   constructor(private http: HttpClient, private commonService: CommonService) { }
+
+  getEntidadesSimples() {
+    return this.http.get<any[]>(`${URL_FASTAPI}/${ENDPOINT_MAESTROS}/entidades`);
+  }
 
   setEntidad(entidad: Entidad) {
     this.entidad = entidad;

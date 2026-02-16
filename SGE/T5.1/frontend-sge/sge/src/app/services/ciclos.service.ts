@@ -3,9 +3,10 @@ import { Ciclo } from '../shared/interfaces/ciclo';
 import { ApiResponse } from '../shared/interfaces/api-response';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../shared/common.service';
-import { URL_API } from 'src/environments/environment';
+import { URL_API, URL_FASTAPI } from 'src/environments/environment';
 
 const ENDPOINT = 'ciclo';
+const ENDPOINT_MAESTROS = 'maestros';
 
 
 @Injectable({
@@ -16,6 +17,10 @@ export class CiclosService {
   ciclo: Ciclo[];
 
   constructor(private http: HttpClient, private commonService: CommonService) { }
+
+  getCiclosSimples() {
+    return this.http.get<any[]>(`${URL_FASTAPI}/${ENDPOINT_MAESTROS}/ciclos`);
+  }
 
   get() {
     return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, { headers: this.commonService.headers });

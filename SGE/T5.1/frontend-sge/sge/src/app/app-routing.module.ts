@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService as AuthGuard } from './guards/auth.guard';
+import { AlumnosComponent } from './alumnos/alumnos.component';
+import { VacantesComponent } from './vacantes/vacantes.component';
 
 
 const routes: Routes = [
@@ -76,6 +78,8 @@ const routes: Routes = [
 //  { path: 'datos-basicos-entidad', loadChildren: () => import('./entidades/datos-entidad/datos-basicos-entidad/datos-basicos-entidad.module').then(m => m.DatosBasicosEntidadModule) },
 //  { path: 'datos-entidad', loadChildren: () => import('./entidades/datos-entidad/datos-entidad.module').then(m => m.DatosEntidadModule) },
 //  { path: 'add-asistente', loadChildren: () => import('./reuniones/datos-reunion/asistentes/add-asistente/add-asistente.module').then(m => m.AddAsistenteModule) },
+  { path: 'alumnos', component: AlumnosComponent },
+  { path: 'vacantes', component: VacantesComponent },
   {
     path: '**',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule)
