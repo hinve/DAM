@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Gestionar Alumnos - {{ vacante.entidad?.entidad }}</h2>
+
+<mat-dialog-content>
+  <div class="contenedor-listas" style="display: flex; gap: 20px;">
+    
+    <!-- LADO IZQUIERDO: DISPONIBLES -->
+    <div style="flex: 1;">
+      <h3>Disponibles</h3>
+      <mat-list role="list" class="lista-borde">
+        <mat-list-item *ngFor="let alumno of disponibles">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <span>{{ alumno.nombre }} {{ alumno.apellidos }}</span>
+            <button mat-icon-button color="primary" (click)="asignar(alumno)">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+        <p *ngIf="disponibles.length === 0">No hay alumnos disponibles.</p>
+      </mat-list>
+    </div>
+
+    <!-- LADO DERECHO: ASIGNADOS -->
+    <div style="flex: 1;">
+      <h3>Asignados ({{ asignados.length }} / {{ vacante.num_vacantes }})</h3>
+      <mat-list role="list" class="lista-borde">
+        <mat-list-item *ngFor="let alumno of asignados">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <span>{{ alumno.nombre }} {{ alumno.apellidos }}</span>
+            <button mat-icon-button color="warn" (click)="quitar(alumno)">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+        <p *ngIf="asignados.length === 0">Ningún alumno asignado.</p>
+      </mat-list>
+    </div>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Vacante' : 'Nueva Vacante' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Entidad</mat-label>
+      <mat-select formControlName="id_entidad">
+        <mat-option *ngFor="let ent of entidades" [value]="ent.id_entidad">
+          {{ ent.entidad }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('id_entidad').hasError('required')">Entidad requerida</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ciclo</mat-label>
+      <mat-select formControlName="id_ciclo">
+        <mat-option *ngFor="let cic of ciclos" [value]="cic.id_ciclo">
+          {{ cic.ciclo }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('id_ciclo').hasError('required')">Ciclo requerido</mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>Curso</mat-label>
+        <input matInput type="number" formControlName="curso" placeholder="Ej. 1">
+        <mat-error *ngIf="form.get('curso').hasError('required')">Curso requerido</mat-error>
+        <mat-error *ngIf="form.get('curso').hasError('min')">Mínimo 2000</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="half-width">
+        <mat-label>Num. Vacantes</mat-label>
+        <input matInput type="number" formControlName="num_vacantes" min="1">
+        <mat-error *ngIf="form.get('num_vacantes').hasError('required')">Requerido</mat-error>
+        <mat-error *ngIf="form.get('num_vacantes').hasError('min')">Mínimo 1</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput formControlName="observaciones"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>
