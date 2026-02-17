@@ -38,9 +38,10 @@ export class GestionAlumnosComponent implements OnInit {
   }
 
   asignar(alumno: any) {
-    this.vacantesService.asignarAlumno(this.vacante.id_vacante, alumno.id_alumno).subscribe(() => {
-      this.cargarDatos(); // Recargar listas
-    }, err => alert('Error al asignar: ' + err.message));
+    this.vacantesService.asignarAlumno(this.vacante.id_vacante, alumno.id_alumno).subscribe(
+      () => this.cargarDatos(), // Recargar listas
+      err => alert('Error al asignar: maximo alcanzado')
+    )
   }
 
   quitar(alumno: any) {

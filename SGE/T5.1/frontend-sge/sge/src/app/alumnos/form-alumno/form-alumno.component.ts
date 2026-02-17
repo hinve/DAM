@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AlumnosService } from 'src/app/services/alumnos.service';
 import { MaestrosService } from 'src/app/services/maestros.service';
 
@@ -13,20 +14,22 @@ export class FormAlumnoComponent implements OnInit {
 
   alumnoForm: FormGroup;
   
-  constructor(private fb: FormBuilder, private alumnosService: AlumnosService, private maestrosServices: MaestrosService) { }
+  constructor(private fb: FormBuilder, private alumnosService: AlumnosService, private maestrosServices: MaestrosService, public dialogRef: MatDialogRef<FormAlumnoComponent>) { }
   
   entidades: any[] = [];
   ciclos: any[] = [];
   
 
   ngOnInit(): void {
-    // Cargar Entidades
-    this.maestrosServices.getEntidades().subscribe(
+  // Cargar Entidades y FILTRAR por tipo Centro Educativo (1)
+    /* this.maestrosServices.getEntidades().subscribe(
       (data) => {
-        this.entidades = data;
+        console.log('Datos recibidos del backend:', data); // <--- MIRA ESTO EN LA CONSOLA (F12)
+        // Filtramos aquí para que el HTML solo reciba los centros
+        this.entidades = data.filter((e: any) => e.id_tipo_entidad === 1);
       },
       (error) => console.error('Error al cargar entidades:', error)
-    );
+    ); */
 
     // Cargar Ciclos
     this.maestrosServices.getCiclos().subscribe(
@@ -35,6 +38,13 @@ export class FormAlumnoComponent implements OnInit {
       },
       (error) => console.error('Error al cargar ciclos:', error)
     );
+
+    this.maestrosServices.getEntidades().subscribe(
+      (data) => {
+        this.entidades = data.filter((e: any) => e.id_tipo_entidad === 1);
+      },
+      (error) => console.error('Error al cargar entidades:', error)
+    )
 
     this.alumnoForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -58,9 +68,11 @@ export class FormAlumnoComponent implements OnInit {
         res => {
           alert('Alumno creado con éxito');
           this.alumnoForm.reset(); // Limpiar el formulario
+          this.dialogRef.close(true); // Cerrar el diálogo y pasar true para indicar que se editó
         },
         err => {
           console.error(err);
+          this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
           alert('Error al crear el alumno: ' + err.message);
         }
       );

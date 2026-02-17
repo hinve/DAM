@@ -5,6 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { FormAlumnoComponent } from './form-alumno/form-alumno.component';
+import { EditAlumnoComponent } from './edit-alumno/edit-alumno.component';
+import { MaestrosService } from '../services/maestros.service';
 
 @Component({
   selector: 'app-alumnos',
@@ -12,17 +14,20 @@ import { FormAlumnoComponent } from './form-alumno/form-alumno.component';
   styleUrls: ['./alumnos.component.scss']
 })
 export class AlumnosComponent implements OnInit {
-[x: string]: any;
+  alumnos = [];
+  [x: string]: any;
 
   // DEFINICIÓN DE COLUMNAS: Qué mostrar y en qué orden
   displayedColumns: string[] = ['nif', 'nombre', 'apellidos', 'curso', 'entidad', 'telefono', 'acciones'];
   
   dataSource = new MatTableDataSource([]);
+  entidades = []; // Para almacenar las entidades y mostrarlas en la tabla o en el formulario de edición
+
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor(private alumnosService: AlumnosService, private dialog: MatDialog) { }
+  constructor(private alumnosService: AlumnosService, private dialog: MatDialog, private maestrosService: MaestrosService) { }
 
   abrirFormulario() {
     const dialogRef = this.dialog.open(FormAlumnoComponent, {
@@ -47,18 +52,28 @@ export class AlumnosComponent implements OnInit {
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator; // Activar paginación
         this.dataSource.sort = this.sort;       // Activar ordenación
+        this.alumnos = res;
+        this.alumnos.forEach(alumno => {
+          console.log(`ID: ${alumno.id_alumno} - Nombre: ${alumno.nombre}`); // Muestra id y nombre juntos
+        });
       },
       err => console.error(err)
     );
   }
 
-  anadirAlumno() {
-    
-  }
-
   editarAlumno(alumno: any) {
-    // Aquí iría la lógica para editar el alumno, como abrir un diálogo con un formulario
-    alert(`Editar alumno: ${alumno.nombre} ${alumno.apellidos}`);
+    if (confirm(`¿Deseas editar el alumno ${alumno.nombre} ${alumno.apellidos}?`)) {
+      const dialogRef = this.dialog.open(EditAlumnoComponent, {
+        width: '400px',
+        data: alumno // Pasamos el alumno a editar al formulario
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cargarAlumnos(); // Recargar la lista después de cerrar el formulario
+        }
+      });
+    }
   }
 
   eliminarAlumno(id: number) {

@@ -37,7 +37,8 @@ export class FormVacanteComponent implements OnInit {
     this.form = this.fb.group({
       id_entidad: [idEntidadInicial, Validators.required],
       id_ciclo: [idCicloInicial, Validators.required],
-      curso: [this.data?.curso || [Validators.required, Validators.min(1), Validators.max(2)]],
+      // Valor inicial primero, y validadores SIEMPRE en el segundo parámetro
+      curso: [this.data?.curso || '', [Validators.required, Validators.min(1), Validators.max(2)]],
       num_vacantes: [this.data?.num_vacantes || 1, [Validators.required, Validators.min(1)]],
       observaciones: [this.data?.observaciones || '']
     });
@@ -60,16 +61,27 @@ export class FormVacanteComponent implements OnInit {
       const id = this.data.id_vacante;
       this.vacantesService.actualizarVacante(id, vacante).subscribe(
         () => this.dialogRef.close(true),
-        err => console.error(err)
+        err => this.manejarError(err)
       );
     } else {
       // Create
       this.vacantesService.crearVacante(vacante).subscribe(
         () => this.dialogRef.close(true),
-        err => console.error(err)
+        err => this.manejarError(err)
       );
     }
   }
+
+  private manejarError(err: any) {
+    // Si el backend devuelve un mensaje de detalle (ej: "Esta vacante ya existe")
+    const mensaje = err.error?.detail || 'Error al procesar la vacante';
+    
+    // Opción 1: Alerta sencilla del navegador
+    alert('AVISO: ' + mensaje);
+
+    // Opción 2: Si quieres ser más profesional, podrías usar un SnackBar de Material
+    // this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
+  } 
 
   close() {
     this.dialogRef.close();

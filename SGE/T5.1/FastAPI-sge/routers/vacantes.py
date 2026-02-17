@@ -143,11 +143,25 @@ def listar_alumnos_disponibles(vacante_id: int, db: Session = Depends(get_db)):
     if not vacante:
         raise HTTPException(status_code=404, detail="Vacante no encontrada")
     
-    alumnos_asignados = db.query(SgiAlumno).join(SgiVacanteAlumno).filter(SgiVacanteAlumno.id_vacante == vacante_id).all()
+    # Obtener alumnos YA asignados a CUALQUIER vacante (no solo a esta)
+    alumnos_ocupados_ids = db.query(SgiVacanteAlumno.id_alumno).all()
+    lista_ocupados = [id_[0] for id_ in alumnos_ocupados_ids]
+
     alumnos_disponibles = db.query(SgiAlumno).filter(
         SgiAlumno.id_ciclo == vacante.id_ciclo, # type: ignore
         SgiAlumno.curso == vacante.curso, # type: ignore
-        ~SgiAlumno.id_alumno.in_([alumno.id_alumno for alumno in alumnos_asignados])
+        ~SgiAlumno.id_alumno.in_(lista_ocupados) # Excluir a cualquiera que ya tenga vacante
     ).all()
     
     return alumnos_disponibles
+
+@router.get("/{vacante_id}/alumnos-asignados", response_model=list[AlumnoResponse])
+def listar_alumnos_asignados(vacante_id: int, db: Session = Depends(get_db)):
+    """Devuelve la lista de objetos Alumno asignados a esa vacante"""
+    vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
+    if not vacante:
+        raise HTTPException(status_code=404, detail="Vacante no encontrada")
+    
+    # Extraemos el objeto 'alumno' de la relación intermedia
+    alumnos = [rel.alumno for rel in vacante.alumnos] 
+    return alumnos
