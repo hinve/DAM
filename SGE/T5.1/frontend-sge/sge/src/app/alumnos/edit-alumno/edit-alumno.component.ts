@@ -32,14 +32,14 @@ export class EditAlumnoComponent implements OnInit {
         // Cargar Entidades FILTRADAS
         this.maestrosServices.getEntidades().subscribe(
           (data) => {
-            console.log('Datos recibidos del backend:', data); // <--- MIRA ESTO EN LA CONSOLA (F12)
             this.entidades = data.filter((e: any) => e.id_tipo_entidad === 1);
-            
-            
-
-            // MUY IMPORTANTE: Rellenar el formulario con los datos recibidos (data de MAT_DIALOG_DATA)
-            // Lo hacemos dentro del subscribe para asegurar que el select tenga opciones antes de marcar la elegida
-            this.alumnoForm.patchValue(this.data);
+            // Lo hago dentro del subscribe para asegurar que el select tenga opciones antes de marcar la elegida
+            const dataFormat = {
+              ...this.data,
+              id_entidad: this.data.entidad?.id_entidad, // Extraemos solo el ID para el select
+              id_ciclo: this.data.ciclo?.id_ciclo          // Extraemos solo el ID para el select
+            }
+            this.alumnoForm.patchValue(dataFormat);
           },
           (error) => console.error('Error al cargar entidades:', error)
         );
@@ -56,10 +56,10 @@ export class EditAlumnoComponent implements OnInit {
         nombre: ['', Validators.required],
         apellidos: ['', Validators.required],
         nif_nie: ['', [Validators.required, Validators.minLength(9)]],
-        fecha_nacimiento: ['', Validators.required], // Nuevo campo requerido
+        fecha_nacimiento: ['', Validators.required],
         curso: ['', Validators.required],
-        id_entidad: ['', Validators.required], // Renombrado de entidad -> id_entidad
-        id_ciclo: ['', Validators.required],   // Nuevo campo requerido
+        id_entidad: ['', Validators.required],
+        id_ciclo: ['', Validators.required],
         telefono: ['', [Validators.required, Validators.pattern('^[0-9]{9}$')]],
         direccion: [''],
         localidad: [''],
@@ -77,11 +77,21 @@ export class EditAlumnoComponent implements OnInit {
             this.dialogRef.close(true); // Cerrar el diálogo y pasar true para indicar que se editó
           },
           err => {
+            if(err.status == 400 && err.error?.detail?.includes('DNI/NIE')) {
+            alert('Error: El NIF/NIE ya existe en el sistema');
             console.error(err);
-            alert('Error al editar el alumno: ' + err.message);
-            this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que no se editó
+            this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
+          } else {
+            console.error(err);
+            this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
+            alert('Error al crear el alumno: ' + err.message);
+          }
           }
         );
       }
+    }
+
+    cancelar() {
+      this.dialogRef.close(false);
     }
   }

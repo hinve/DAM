@@ -16,6 +16,7 @@ export class FormVacanteComponent implements OnInit {
   entidades: any[] = [];
   ciclos: any[] = [];
   isEditMode: boolean = false;
+  tieneAlumnosAsignados: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,22 +29,24 @@ export class FormVacanteComponent implements OnInit {
 
   ngOnInit(): void {
     this.isEditMode = !!this.data;
-    
-    // Si estamos editando, data.entidad y data.ciclo vienen como objetos {id: ..., nombre: ...}
-    // Pero el formulario espera el ID (id_entidad, id_ciclo)
+    this.tieneAlumnosAsignados = this.data?.num_alumnos && this.data.num_alumnos > 0;
+
     const idEntidadInicial = this.data?.entidad?.id_entidad !== undefined ? this.data.entidad.id_entidad : (this.data?.id_entidad || '');
     const idCicloInicial = this.data?.ciclo?.id_ciclo !== undefined ? this.data.ciclo.id_ciclo : (this.data?.id_ciclo || '');
 
     this.form = this.fb.group({
       id_entidad: [idEntidadInicial, Validators.required],
       id_ciclo: [idCicloInicial, Validators.required],
-      // Valor inicial primero, y validadores SIEMPRE en el segundo parámetro
       curso: [this.data?.curso || '', [Validators.required, Validators.min(1), Validators.max(2)]],
       num_vacantes: [this.data?.num_vacantes || 1, [Validators.required, Validators.min(1)]],
       observaciones: [this.data?.observaciones || '']
     });
 
     this.loadMaestros();
+
+    if (this.tieneAlumnosAsignados) {
+      this.form.disable();
+    }
   }
 
   loadMaestros() {
@@ -76,11 +79,7 @@ export class FormVacanteComponent implements OnInit {
     // Si el backend devuelve un mensaje de detalle (ej: "Esta vacante ya existe")
     const mensaje = err.error?.detail || 'Error al procesar la vacante';
     
-    // Opción 1: Alerta sencilla del navegador
     alert('AVISO: ' + mensaje);
-
-    // Opción 2: Si quieres ser más profesional, podrías usar un SnackBar de Material
-    // this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
   } 
 
   close() {

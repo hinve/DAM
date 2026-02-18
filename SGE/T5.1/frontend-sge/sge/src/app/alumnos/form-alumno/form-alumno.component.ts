@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AlumnosService } from 'src/app/services/alumnos.service';
 import { MaestrosService } from 'src/app/services/maestros.service';
 
@@ -14,7 +14,7 @@ export class FormAlumnoComponent implements OnInit {
 
   alumnoForm: FormGroup;
   
-  constructor(private fb: FormBuilder, private alumnosService: AlumnosService, private maestrosServices: MaestrosService, public dialogRef: MatDialogRef<FormAlumnoComponent>) { }
+  constructor(private fb: FormBuilder, private alumnosService: AlumnosService, private maestrosServices: MaestrosService, public dialogRef: MatDialogRef<FormAlumnoComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
   
   entidades: any[] = [];
   ciclos: any[] = [];
@@ -50,20 +50,22 @@ export class FormAlumnoComponent implements OnInit {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       nif_nie: ['', [Validators.required, Validators.minLength(9)]],
-      fecha_nacimiento: ['', Validators.required], // Nuevo campo requerido
+      fecha_nacimiento: ['', Validators.required],
       curso: ['', Validators.required],
-      id_entidad: ['', Validators.required], // Renombrado de entidad -> id_entidad
-      id_ciclo: ['', Validators.required],   // Nuevo campo requerido
+      id_entidad: ['', Validators.required],
+      id_ciclo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]{9}$')]],
       direccion: [''],
       localidad: [''],
       id_provincia: [null]
     });
+    
   }
 
   guardar() {
     if (this.alumnoForm.valid) {
       const nuevoAlumno = this.alumnoForm.value;
+      
       this.alumnosService.crearAlumno(nuevoAlumno).subscribe(
         res => {
           alert('Alumno creado con éxito');
@@ -71,9 +73,15 @@ export class FormAlumnoComponent implements OnInit {
           this.dialogRef.close(true); // Cerrar el diálogo y pasar true para indicar que se editó
         },
         err => {
-          console.error(err);
-          this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
-          alert('Error al crear el alumno: ' + err.message);
+          if(err.status == 400 && err.error?.detail?.includes('DNI/NIE')) {
+            alert('Error: El NIF/NIE ya existe en el sistema');
+            console.error(err);
+            this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
+          } else {
+            console.error(err);
+            this.dialogRef.close(false); // Cerrar el diálogo y pasar false para indicar que hubo un error
+            alert('Error al crear el alumno: ' + err.message);
+          }
         }
       );
     }

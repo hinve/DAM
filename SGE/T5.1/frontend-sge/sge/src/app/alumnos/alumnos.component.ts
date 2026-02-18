@@ -23,7 +23,6 @@ export class AlumnosComponent implements OnInit {
   dataSource = new MatTableDataSource([]);
   entidades = []; // Para almacenar las entidades y mostrarlas en la tabla o en el formulario de edición
 
-
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
