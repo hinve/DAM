@@ -6,6 +6,7 @@ from datetime import date
 class EntidadSimple(BaseModel):
     id_entidad: int
     entidad: str  # ← Aquí va "Accenture"
+    id_tipo_entidad: int
     
     class Config:
         from_attributes = True
@@ -19,7 +20,7 @@ class CicloSimple(BaseModel):
 
 class ProvinciaSimple(BaseModel):
     id_provincia: int
-    provincia: str  # ← Aquí va "Sevilla"
+    provincia: str
     
     class Config:
         from_attributes = True

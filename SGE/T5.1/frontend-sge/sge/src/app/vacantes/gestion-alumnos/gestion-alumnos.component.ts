@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { VacantesService } from 'src/app/services/vacantes.service';
 
@@ -7,7 +7,7 @@ import { VacantesService } from 'src/app/services/vacantes.service';
   templateUrl: './gestion-alumnos.component.html',
   styleUrls: ['./gestion-alumnos.component.scss']
 })
-export class GestionAlumnosComponent implements OnInit {
+export class GestionAlumnosComponent implements OnInit, OnDestroy {
 
   asignados: any[] = [];
   disponibles: any[] = [];
@@ -19,6 +19,9 @@ export class GestionAlumnosComponent implements OnInit {
     private vacantesService: VacantesService
   ) { 
     this.vacante = data;
+  }
+  ngOnDestroy(): void {
+    this.cerrar();
   }
 
   ngOnInit(): void {
@@ -38,9 +41,10 @@ export class GestionAlumnosComponent implements OnInit {
   }
 
   asignar(alumno: any) {
-    this.vacantesService.asignarAlumno(this.vacante.id_vacante, alumno.id_alumno).subscribe(() => {
-      this.cargarDatos(); // Recargar listas
-    }, err => alert('Error al asignar: ' + err.message));
+    this.vacantesService.asignarAlumno(this.vacante.id_vacante, alumno.id_alumno).subscribe(
+      () => this.cargarDatos(), // Recargar listas
+      err => alert('Error al asignar: maximo alcanzado')
+    )
   }
 
   quitar(alumno: any) {

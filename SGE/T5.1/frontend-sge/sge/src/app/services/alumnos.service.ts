@@ -31,4 +31,13 @@ export class AlumnosService {
   eliminarAlumno(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  buscarIdPorNombreYApellidos(nombre: string, apellidos: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/buscar`, {
+      params: {
+        nombre: nombre,
+        apellidos: apellidos
+      }
+    });
+  }
 }

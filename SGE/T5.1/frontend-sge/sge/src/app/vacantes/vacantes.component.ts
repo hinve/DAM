@@ -14,10 +14,15 @@ import { GestionAlumnosComponent } from './gestion-alumnos/gestion-alumnos.compo
 })
 export class VacantesComponent implements OnInit, AfterViewInit {
 
+  // columnas a mostrar en la tabla
   displayedColumns: string[] = ['entidad', 'ciclo', 'curso', 'num_vacantes', 'num_alumnos', 'acciones'];
+  // libro
   dataSource = new MatTableDataSource<any>([]);
 
+  // en vez de ver el libro entero ves las paginas
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  // indice del libro
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(

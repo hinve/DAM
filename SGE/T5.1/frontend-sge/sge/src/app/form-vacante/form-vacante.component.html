@@ -49,5 +49,11 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
+  <button mat-button color="primary" (click)="save()" [disabled]="form.invalid">
+  Guardar
+</button>
 </mat-dialog-actions>
+
+<div *ngIf="tieneAlumnosAsignados" style="color: red; margin-top: 10px;">
+  No se puede editar una vacante que ya tiene alumnos asignados.
+</div>

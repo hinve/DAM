@@ -15,6 +15,9 @@ router = APIRouter(
 
 @router.get("/", response_model=list[VacanteResponse])
 def listar_vacantes(db: Session = Depends(get_db)):
+    """
+    Obtiene la lista de todas las vacantes, incluyendo el número de alumnos y sus nombres asignados a cada vacante.
+    """
     vacantes = db.query(SgiVacantes).options(joinedload(SgiVacantes.entidad), joinedload(SgiVacantes.ciclo)).all()
     num_alumnos = {vacante.id_vacante: len(vacante.alumnos) for vacante in vacantes}
     listado_alumnos = {vacante.id_vacante: [f"{alumno.alumno.nombre} {alumno.alumno.apellidos}" for alumno in vacante.alumnos] for vacante in vacantes}
@@ -27,6 +30,10 @@ def listar_vacantes(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=VacanteResponse, status_code=201)
 def crear_vacante(vacante: VacanteCreate, db: Session = Depends(get_db)):
+    """
+    Crea una nueva vacante si no existe ya una para la misma entidad, ciclo y curso.
+    Devuelve la vacante creada.
+    """
     if db.query(SgiVacantes).filter(
         SgiVacantes.id_entidad == vacante.id_entidad,
         SgiVacantes.id_ciclo == vacante.id_ciclo,
@@ -51,6 +58,9 @@ def crear_vacante(vacante: VacanteCreate, db: Session = Depends(get_db)):
 
 @router.get("/{vacante_id}", response_model=VacanteResponse)
 def obtener_vacante(vacante_id: int, db: Session = Depends(get_db)):
+    """
+    Obtiene la información detallada de una vacante por su ID, incluyendo alumnos asignados.
+    """
     vacante = db.query(SgiVacantes).options(joinedload(SgiVacantes.entidad), joinedload(SgiVacantes.ciclo)).filter(SgiVacantes.id_vacante == vacante_id).first()
     
     if not vacante:
@@ -63,6 +73,11 @@ def obtener_vacante(vacante_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{vacante_id}", response_model=VacanteResponse)
 def actualizar_vacante(vacante_id: int, vacante_data: VacanteCreate, db: Session = Depends(get_db)):
+    """
+    Actualiza los datos de una vacante existente por su ID.
+    Valida que no exista duplicidad para entidad, ciclo y curso.
+    Devuelve la vacante actualizada.
+    """
     vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
     if not vacante:
         raise HTTPException(status_code=404, detail="Vacante no encontrada")
@@ -92,6 +107,9 @@ def actualizar_vacante(vacante_id: int, vacante_data: VacanteCreate, db: Session
 
 @router.delete("/{vacante_id}", status_code=204)
 def eliminar_vacante(vacante_id: int, db: Session = Depends(get_db)):
+    """
+    Elimina una vacante por su ID si no tiene alumnos asignados.
+    """
     vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
     if not vacante:
         raise HTTPException(status_code=404, detail="Vacante no encontrada")
@@ -102,6 +120,9 @@ def eliminar_vacante(vacante_id: int, db: Session = Depends(get_db)):
     
 @router.post("/{vacante_id}/asignar-alumno/{alumno_id}", status_code=204)
 def asignar_alumno_a_vacante(vacante_id: int, alumno_id: int, db: Session = Depends(get_db)):
+    """
+    Asigna un alumno a una vacante si cumple los requisitos de ciclo, curso y disponibilidad.
+    """
     vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
     if not vacante:
         raise HTTPException(status_code=404, detail="Vacante no encontrada")
@@ -128,6 +149,9 @@ def asignar_alumno_a_vacante(vacante_id: int, alumno_id: int, db: Session = Depe
     
 @router.delete("/{vacante_id}/alumnos/{alumno_id}", status_code=204)
 def quitar_alumno(vacante_id: int, alumno_id: int, db: Session = Depends(get_db)):
+    """
+    Quita la relación entre un alumno y una vacante.
+    """
     relacion = db.query(SgiVacanteAlumno).filter(
         SgiVacanteAlumno.id_vacante == vacante_id,
         SgiVacanteAlumno.id_alumno == alumno_id
@@ -139,15 +163,34 @@ def quitar_alumno(vacante_id: int, alumno_id: int, db: Session = Depends(get_db)
     
 @router.get("/{vacante_id}/alumnos-disponibles", response_model=list[AlumnoResponse])
 def listar_alumnos_disponibles(vacante_id: int, db: Session = Depends(get_db)):
+    """
+    Devuelve la lista de alumnos disponibles para ser asignados a una vacante concreta (mismo ciclo y curso, y sin vacante asignada).
+    """
     vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
     if not vacante:
         raise HTTPException(status_code=404, detail="Vacante no encontrada")
     
-    alumnos_asignados = db.query(SgiAlumno).join(SgiVacanteAlumno).filter(SgiVacanteAlumno.id_vacante == vacante_id).all()
+    # Obtener alumnos YA asignados a CUALQUIER vacante (no solo a esta)
+    alumnos_ocupados_ids = db.query(SgiVacanteAlumno.id_alumno).all()
+    lista_ocupados = [id_[0] for id_ in alumnos_ocupados_ids]
+
     alumnos_disponibles = db.query(SgiAlumno).filter(
         SgiAlumno.id_ciclo == vacante.id_ciclo, # type: ignore
         SgiAlumno.curso == vacante.curso, # type: ignore
-        ~SgiAlumno.id_alumno.in_([alumno.id_alumno for alumno in alumnos_asignados])
+        ~SgiAlumno.id_alumno.in_(lista_ocupados) # Excluir a cualquiera que ya tenga vacante
     ).all()
     
     return alumnos_disponibles
+
+@router.get("/{vacante_id}/alumnos-asignados", response_model=list[AlumnoResponse])
+def listar_alumnos_asignados(vacante_id: int, db: Session = Depends(get_db)):
+    """
+    Devuelve la lista de alumnos asignados a una vacante concreta.
+    """
+    vacante = db.query(SgiVacantes).filter(SgiVacantes.id_vacante == vacante_id).first()
+    if not vacante:
+        raise HTTPException(status_code=404, detail="Vacante no encontrada")
+    
+    # Extraemos el objeto 'alumno' de la relación intermedia
+    alumnos = [rel.alumno for rel in vacante.alumnos] 
+    return alumnos

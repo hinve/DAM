@@ -116,3 +116,4 @@ class SgiProvincias(Base):
     siglas_provincia = Column(String(2))
     provincia = Column(String(50))
     observaciones = Column(Text)
+    

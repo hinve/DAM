@@ -31,6 +31,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from "@angular/material/dialog";
 import { GestionAlumnosComponent } from './vacantes/gestion-alumnos/gestion-alumnos.component';
 import { MatListModule } from "@angular/material/list";
+import { EditAlumnoComponent } from './alumnos/edit-alumno/edit-alumno.component';
 
 // import { NgxLoadingXModule, POSITION, SPINNER, NgxLoadingXConfig } from 'ngx-loading-x';
 
@@ -56,6 +57,7 @@ import { MatListModule } from "@angular/material/list";
     FormAlumnoComponent,
     FormVacanteComponent,
     GestionAlumnosComponent,
+    EditAlumnoComponent,
   ],
   imports: [
     BrowserModule,
