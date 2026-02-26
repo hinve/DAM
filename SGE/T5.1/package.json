@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@angular/cli": "^21.1.4",
     "tslib": "^2.8.1"
   }
 }
